@@ -64,6 +64,29 @@
             backdrop-filter: blur(20px);
         }
 
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(100, 100, 100, 0.4);
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(100, 100, 100, 0.6);
+        }
+
+        .content-2 {
+            overflow-y: scroll;
+            height: 600px;
+
+        }
+
         .section {
             margin-bottom: 40px;
         }
@@ -518,19 +541,19 @@
                 <div class="info-grid">
                     <div class="info-box budget">
                         <h3>Total Budget</h3>
-                        <div class="content" id="budgetContent">-</div>
+                        <div class="content content-2" id="budgetContent">-</div>
                     </div>
                     <div class="info-box transport">
                         <h3>Transportation</h3>
-                        <div class="content" id="transportContent">-</div>
+                        <div class="content content-2" id="transportContent">-</div>
                     </div>
                     <div class="info-box accommodation">
                         <h3>Accommodation</h3>
-                        <div class="content" id="accommodationContent">-</div>
+                        <div class="content content-2" id="accommodationContent">-</div>
                     </div>
                     <div class="info-box tips">
                         <h3>Local Tips</h3>
-                        <div class="content" id="tipsContent">-</div>
+                        <div class="content content-2" id="tipsContent">-</div>
                     </div>
                 </div>
 
@@ -641,7 +664,7 @@ Make the itinerary engaging, practical, and tailored to the specified preference
 
             try {
                 // Call your Vercel serverless function
-                const response = await fetch('/api/generate-itinerary', {
+                const response = await fetch('/api/generate-itinerary.js', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

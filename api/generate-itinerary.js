@@ -1,3 +1,147 @@
+// export default async function handler(req, res) {
+//   console.log("=== API Function Called ===");
+//   console.log("Method:", req.method);
+
+//   // Enable CORS
+//   res.setHeader("Access-Control-Allow-Credentials", true);
+//   res.setHeader("Access-Control-Allow-Origin", "*");
+//   res.setHeader(
+//     "Access-Control-Allow-Methods",
+//     "GET,OPTIONS,PATCH,DELETE,POST,PUT"
+//   );
+//   res.setHeader(
+//     "Access-Control-Allow-Headers",
+//     "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version"
+//   );
+
+//   // Handle OPTIONS request
+//   if (req.method === "OPTIONS") {
+//     console.log("OPTIONS request received");
+//     return res.status(200).end();
+//   }
+
+//   // Only allow POST
+//   if (req.method !== "POST") {
+//     console.log("Method not allowed:", req.method);
+//     return res.status(405).json({ error: "Method not allowed" });
+//   }
+
+//   try {
+//     // Get prompt from request body
+//     const { prompt } = req.body;
+
+//     if (!prompt) {
+//       console.log("No prompt provided");
+//       return res.status(400).json({ error: "Prompt is required" });
+//     }
+
+//     console.log("Prompt received, length:", prompt.length);
+
+//     // Get OpenAI API key from environment
+//     const apiKey = process.env.OPENAI_API_KEY;
+
+//     if (!apiKey) {
+//       console.error("❌ OPENAI_API_KEY not found in environment variables");
+//       return res.status(500).json({
+//         error: "API key not configured",
+//         hint: "Please add OPENAI_API_KEY to your Vercel environment variables",
+//       });
+//     }
+
+//     console.log(
+//       "✓ API Key found, starting with:",
+//       apiKey.substring(0, 7) + "..."
+//     );
+//     console.log("Making request to OpenAI API...");
+
+//     // Call OpenAI API
+//     const apiResponse = await fetch(
+//       "https://api.openai.com/v1/chat/completions",
+//       {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${apiKey}`,
+//         },
+//         body: JSON.stringify({
+//           model: "gpt-4o",
+//           messages: [
+//             {
+//               role: "system",
+//               content:
+//                 "You are a professional travel planner who creates detailed, personalized travel itineraries. Always structure your response with clear section headers as requested.",
+//             },
+//             {
+//               role: "user",
+//               content: prompt,
+//             },
+//           ],
+//           max_tokens: 4000,
+//           temperature: 0.7,
+//         }),
+//       }
+//     );
+
+//     console.log("OpenAI API Response Status:", apiResponse.status);
+//     console.log("OpenAI API Response Status Text:", apiResponse.statusText);
+
+//     // Get response text first
+//     const responseText = await apiResponse.text();
+//     console.log("Response received, length:", responseText.length);
+
+//     // Check if response is OK
+//     if (!apiResponse.ok) {
+//       console.error("❌ OpenAI API Error:", responseText);
+
+//       let errorMessage = `OpenAI API error: ${apiResponse.status}`;
+//       try {
+//         const errorData = JSON.parse(responseText);
+//         errorMessage = errorData.error?.message || errorMessage;
+//       } catch (e) {
+//         errorMessage = responseText.substring(0, 200) || errorMessage;
+//       }
+
+//       return res.status(apiResponse.status).json({
+//         error: errorMessage,
+//         status: apiResponse.status,
+//       });
+//     }
+
+//     // Parse JSON
+//     let data;
+//     try {
+//       data = JSON.parse(responseText);
+//       console.log("✓ Successfully parsed JSON response");
+//     } catch (parseError) {
+//       console.error("❌ Failed to parse JSON:", parseError);
+//       console.error("Response text:", responseText.substring(0, 500));
+//       return res.status(500).json({
+//         error: "Failed to parse API response",
+//         details: responseText.substring(0, 200),
+//       });
+//     }
+
+//     // Verify response structure
+//     if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+//       console.error("❌ Unexpected response structure:", data);
+//       return res.status(500).json({
+//         error: "Unexpected response format from OpenAI",
+//         data: data,
+//       });
+//     }
+
+//     console.log("✓ Returning successful response");
+//     return res.status(200).json(data);
+//   } catch (error) {
+//     console.error("❌ Unhandled Error:", error);
+//     console.error("Error stack:", error.stack);
+//     return res.status(500).json({
+//       error: error.message || "Internal server error",
+//       details: error.toString(),
+//     });
+//   }
+// }
+
 export default async function handler(req, res) {
   console.log("=== API Function Called ===");
   console.log("Method:", req.method);
@@ -37,69 +181,63 @@ export default async function handler(req, res) {
 
     console.log("Prompt received, length:", prompt.length);
 
-    // Get OpenAI API key from environment
-    const apiKey = process.env.OPENAI_API_KEY;
+    // Get Google AI API key from environment
+    const apiKey = process.env.GOOGLE_AI_API_KEY;
 
     if (!apiKey) {
-      console.error("❌ OPENAI_API_KEY not found in environment variables");
-      console.error(
-        "Available env vars:",
-        Object.keys(process.env).filter((k) => k.includes("OPENAI"))
-      );
+      console.error("❌ GOOGLE_AI_API_KEY not found in environment variables");
       return res.status(500).json({
         error: "API key not configured",
-        hint: "Please add OPENAI_API_KEY to your .env.local file",
+        hint: "Please add GOOGLE_AI_API_KEY to your Vercel environment variables",
       });
     }
 
-    console.log(
-      "✓ API Key found, starting with:",
-      apiKey.substring(0, 15) + "..."
-    );
-    console.log("Making request to OpenAI API...");
+    console.log("✓ API Key found");
+    console.log("Making request to Google AI API...");
 
-    // Call OpenAI API
+    // Call Google AI API (Gemini)
     const apiResponse = await fetch(
-      "https://api.openai.com/v1/chat/completions",
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          model: "gpt-4o",
-          messages: [
+          contents: [
             {
-              role: "system",
-              content:
-                "You are a professional travel planner who creates detailed, personalized travel itineraries.",
-            },
-            {
-              role: "user",
-              content: prompt,
+              parts: [
+                {
+                  text: `You are a professional travel planner who creates detailed, personalized travel itineraries. Always structure your response with clear section headers as requested.\n\n${prompt}`,
+                },
+              ],
             },
           ],
-          max_tokens: 4000,
-          temperature: 0.7,
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 4000,
+          },
         }),
       }
     );
 
-    console.log("OpenAI API Response Status:", apiResponse.status);
-    console.log("OpenAI API Response Status Text:", apiResponse.statusText);
+    console.log("Google AI API Response Status:", apiResponse.status);
+    console.log("Google AI API Response Status Text:", apiResponse.statusText);
+
+    // Get response text first
+    const responseText = await apiResponse.text();
+    console.log("Response received, length:", responseText.length);
 
     // Check if response is OK
     if (!apiResponse.ok) {
-      const errorText = await apiResponse.text();
-      console.error("❌ OpenAI API Error:", errorText);
+      console.error("❌ Google AI API Error:", responseText);
 
-      let errorMessage = `OpenAI API error: ${apiResponse.status}`;
+      let errorMessage = `Google AI API error: ${apiResponse.status}`;
       try {
-        const errorData = JSON.parse(errorText);
+        const errorData = JSON.parse(responseText);
         errorMessage = errorData.error?.message || errorMessage;
       } catch (e) {
-        errorMessage = errorText || errorMessage;
+        errorMessage = responseText.substring(0, 200) || errorMessage;
       }
 
       return res.status(apiResponse.status).json({
@@ -107,10 +245,6 @@ export default async function handler(req, res) {
         status: apiResponse.status,
       });
     }
-
-    // Get response text
-    const responseText = await apiResponse.text();
-    console.log("✓ Response received, length:", responseText.length);
 
     // Parse JSON
     let data;
@@ -126,17 +260,36 @@ export default async function handler(req, res) {
       });
     }
 
-    // Verify response structure
-    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+    // Verify response structure (Google AI format)
+    if (
+      !data.candidates ||
+      !data.candidates[0] ||
+      !data.candidates[0].content ||
+      !data.candidates[0].content.parts
+    ) {
       console.error("❌ Unexpected response structure:", data);
       return res.status(500).json({
-        error: "Unexpected response format from OpenAI",
+        error: "Unexpected response format from Google AI",
         data: data,
       });
     }
 
+    // Extract text from Google AI response
+    const generatedText = data.candidates[0].content.parts[0].text;
+
+    // Convert to OpenAI-compatible format for frontend
+    const responseData = {
+      choices: [
+        {
+          message: {
+            content: generatedText,
+          },
+        },
+      ],
+    };
+
     console.log("✓ Returning successful response");
-    return res.status(200).json(data);
+    return res.status(200).json(responseData);
   } catch (error) {
     console.error("❌ Unhandled Error:", error);
     console.error("Error stack:", error.stack);
