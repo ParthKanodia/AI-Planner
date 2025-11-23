@@ -1,0 +1,22 @@
+{
+  "name": "ai-planner",
+  "version": "1.0.0",
+  "description": "Prototype",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ParthKanodia/AI-Planner.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ParthKanodia/AI-Planner/issues"
+  },
+  "homepage": "https://github.com/ParthKanodia/AI-Planner#readme",
+  "dependencies": {
+    "vercel": "^48.10.10"
+  }
+}
